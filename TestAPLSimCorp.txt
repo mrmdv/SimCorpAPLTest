@@ -1,0 +1,13 @@
+FirstPeriodDays←14  ⍝ Days count in first period (Diff between Agreement date and Calculation date)
+N←5                 ⍝ Years
+R←0.15              ⍝ Interest rate per year
+X←10000             ⍝ Invest amount
+
+
+arr←(N×12)⍴30 ⋄ arr[1]←FirstPeriodDays ⋄ arr←R×arr÷360
+funcFX ← { monthlyPayment ← ⍵ ⋄ FX_inner ←  {⍵≤60: (⍺ + (⍺ × arr[⍵]) - monthlyPayment) ∇ ⍵ + 1  ⋄ ⍺} ⋄ X FX_inner 1}
+funcFindMP ← {valueFX ← funcFX ⍵ ⋄ 0.3≤|valueFX : ∇ ⍵ - valueFX ÷ -N×12 ⋄ ⍵ }
+MonthlyPayment ← ⍎10 2⍕funcFindMP 10
+funcSumInterest ← {⍵ ≤ 60 : ⍎10 2⍕(⍺ × arr[⍵]) + (⍺ - MonthlyPayment - ⍎10 2⍕(⍺ × arr[⍵])) ∇ ⍵ + 1 ⋄ 0}
+X funcSumInterest 1
+
